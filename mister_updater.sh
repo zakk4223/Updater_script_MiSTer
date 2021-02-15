@@ -207,6 +207,7 @@ AUTOREBOOT="true"
 REBOOT_PAUSE=0  # in seconds
 TEMP_PATH="/tmp"
 TO_BE_DELETED_EXTENSION="to_be_deleted"
+DEFAULT_BRANCH="master"
 
 
 
@@ -543,6 +544,10 @@ function checkCoreURL {
 	# fi
 	#BRANCH_NAME=$(curl $CURL_RETRY $SSL_SECURITY_OPTION -sSLf "${CORE_URL}/branches" | grep "branch-name" | head -n1 | sed 's/.*>\(.*\)<.*/\1/')
 	BRANCH_NAME=${CORE_DEFAULT_BRANCHES["${CORE_URL##*/}"]}
+	if [ -z "$BRANCH_NAME" ]
+	then
+		BRANCH_NAME=$DEFAULT_BRANCH
+	fi
 	case "$CORE_URL" in
 		*SD-Installer*)
 			RELEASES_URL="$CORE_URL"
