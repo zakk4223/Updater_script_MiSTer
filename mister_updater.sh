@@ -93,8 +93,6 @@
 #Base directory for all script’s tasks, "/media/fat" for SD root, "/media/usb0" for USB drive root.
 BASE_PATH="/media/fat"
 
-declare -A CORE_DEFAULT_BRANCHES
-
 #Directories where all core categories will be downloaded.
 declare -A CORE_CATEGORY_PATHS
 CORE_CATEGORY_PATHS["computer-cores"]="$BASE_PATH/_Computer"
@@ -484,6 +482,7 @@ fi
 
 echo "Downloading MiSTer-devel updates and main branches"
 echo ""
+declare -A CORE_DEFAULT_BRANCHES
 API_PAGE=1
 #API_RESPONSE=$(curl ${CURL_RETRY} ${SSL_SECURITY_OPTION} -sSLf "${MISTER_DEVEL_REPOS_URL}?per_page=100&page=${API_PAGE}" | grep -oE '("svn_url": "[^"]*)|("updated_at": "[^"]*)' | sed 's/"svn_url": "//; s/"updated_at": "//')
 API_RESPONSE=$(curl ${CURL_RETRY} ${SSL_SECURITY_OPTION} -sSLf "${MISTER_DEVEL_REPOS_URL}?per_page=100&page=${API_PAGE}" | grep -oE '("svn_url": "[^"]*)|("updated_at": "[^"]*)|("default_branch": "[^"]*)' | sed 's/"svn_url": "//; s/"updated_at": "//; s/"default_branch": "//')
