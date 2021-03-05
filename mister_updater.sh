@@ -20,6 +20,8 @@
 
 
 
+# Version 4.0.12 - 2021-03-05 - Updated checkAdditionalRepository in order to reflect a change in GitHub HTML code.
+# Version 4.0.11 - 2021-02-21 - Removied curl and folder creation errors (thanks to theypsilon and cdewit).
 # Version 4.0.10 - 2020-12-07 - Optimised repositories main branch detection through a single API call.
 # Version 4.0.9 - 2020-06-25 - Download timeout increased from 120 seconds to 180.
 # Version 4.0.8 - 2020-06-24 - Updated checkAdditionalRepository in order to reflect a change in GitHub HTML code.
@@ -213,7 +215,7 @@ DEFAULT_BRANCH="master"
 
 #========= CODE STARTS HERE =========
 
-UPDATER_VERSION="4.0.10"
+UPDATER_VERSION="4.0.12"
 echo "MiSTer Updater version ${UPDATER_VERSION}"
 echo ""
 
@@ -804,15 +806,23 @@ function checkCoreURL {
 							"Minimig")
 								CORE_INTERNAL_NAME="Amiga"
 								;;
-							"Apple-I"|"C64"|"PDP1"|"NeoGeo"|"AY-3-8500")
+							"Apple-I"|"C64"|"PDP1"|"NeoGeo"|"AY-3-8500"|"EDSAC"|"Galaksija")
 								CORE_INTERNAL_NAME="${BASE_FILE_NAME}"
 								;;
 							"SharpMZ")
 								CORE_INTERNAL_NAME="SHARP MZ SERIES"
 								;;
+							"Amstrad-PCW")
+								CORE_INTERNAL_NAME="Amstrad PCW"
+								;;
 							*)
 								CORE_SOURCE_URL="$(echo "https://github.com$MAX_RELEASE_URL" | sed 's/releases.*//g')${BASE_FILE_NAME}.sv"
-								CORE_INTERNAL_NAME="$(curl $CURL_RETRY $SSL_SECURITY_OPTION -sSLf "${CORE_SOURCE_URL}?raw=true" | awk '/CONF_STR[^=]*=/,/;/' | grep -oE -m1 '".*?;' | sed 's/[";]//g')"
+								CORE_INTERNAL_NAME="$(curl $CURL_RETRY $SSL_SECURITY_OPTION -sSLf "${CORE_SOURCE_URL}?raw=true" 2> /tmp/core_internal_name_error | awk '/CONF_STR[^=]*=/,/;/' | grep -oE -m1 '"[^;]*?;' | sed 's/[";]//g')"
+								if [ "$CORE_INTERNAL_NAME" == "" ]
+								then
+									cat /tmp/core_internal_name_error
+									echo "Couldn't create directory for ${BASE_FILE_NAME}"
+								fi
 								;;
 						esac
 						if [ "$CORE_INTERNAL_NAME" != "" ]
@@ -913,7 +923,8 @@ function checkAdditionalRepository {
 		#done
 		#CONTENT_TDS=$(echo "$CONTENT_TDS" | awk '/class="content">/,/<\/td>/' | tr -d '\n' | sed 's/ \{1,\}/+/g' | sed 's/<\/td>/\n/g')
 		#CONTENT_TDS=$(echo "$CONTENT_TDS" | awk '/class="content">/,/<\/td>/' | tr -d '\n' | sed 's/ \{1,\}/+/g; s/<\/td>/\n/g')
-		ADDITIONAL_FILE_URLS=$(echo "$CONTENT_HTML" | grep -oE 'js-navigation-open link-gray-dark[^>]*' | sed 's/.*href="//; s/"//')
+		#ADDITIONAL_FILE_URLS=$(echo "$CONTENT_HTML" | grep -oE 'js-navigation-open link-gray-dark[^>]*' | sed 's/.*href="//; s/"//')
+		ADDITIONAL_FILE_URLS=$(echo "$CONTENT_HTML" | grep -oE 'js-navigation-open[^>]*' | sed 's/.*href="//; s/"//')
 		#ADDITIONAL_FILE_URLS=$(echo "$CONTENT_TDS" | grep -oE 'js-navigation-open link-gray-dark[^>]*')
 		CONTENT_INDEX=0
 		#for CONTENT_TD in $CONTENT_TDS; do
