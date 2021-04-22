@@ -1014,7 +1014,7 @@ for CORE_URL in $CORE_URLS; do
 				if [ "$CORE_CATEGORIES_LAST_SUCCESSFUL_RUN_FILTER" == "" ] || [[ "${CORE_URL^^}" =~ ${CORE_CATEGORIES_LAST_SUCCESSFUL_RUN_FILTER_REGEX^^} ]]
 				then
 					#if echo "$CORE_URL" | grep -qE "(SD-Installer)|(/Main_MiSTer$)|(/Menu_MiSTer$)"
-					if [[ "${CORE_URL}"  =~ (SD-Installer)|(/Main_MiSTer$)|(/Menu_MiSTer$) ]]
+					if [ "${CORE_URL}" == "${MAIN_MISTER_URL}" ] || [[ "${CORE_URL}"  =~ (SD-Installer)|(/Main_MiSTer$)|(/Menu_MiSTer$) ]]
 					then
 						checkCoreURL
 					else
